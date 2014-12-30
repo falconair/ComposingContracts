@@ -35,6 +35,7 @@ import scala.reflect.ClassTag
 
   //Observable primitives
   abstract class Obs[A]{
+  /*
    def +[B](that:Obs[B]):Obs[A] = Lift2Obs((a:A,b:B)=> a+b, this,that)
    def -[B](that:Obs[B]):Obs[A] = Lift2Obs((a:A,b:B)=> a-b, this,that)
    def *[B](that:Obs[B]):Obs[A] = Lift2Obs((a:A,b:B)=> a*b, this,that)
@@ -46,6 +47,7 @@ import scala.reflect.ClassTag
    def <[B](that:Obs[B]):Obs[Boolean] = Lift2Obs((a:A,b:B)=> a<b, this,that)
    def >=[B](that:Obs[B]):Obs[Boolean] = Lift2Obs((a:A,b:B)=> a>=b, this,that)
    def <=[B](that:Obs[B]):Obs[Boolean] = Lift2Obs((a:A,b:B)=> a<=b, this,that)
+   */
 }
   case class Konst[A] (k:A) extends Obs[A]
   case class LiftObs[B,A] (lifted:(B)=>A, o:Obs[B]) extends Obs[A]
