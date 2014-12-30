@@ -35,6 +35,19 @@ class ComposingContracts {
   case class Anytime(cond: Obs[Boolean], contract: Contract) extends Contract
   case class Until(cond: Obs[Boolean], contract: Contract) extends Contract
 
+  def contractValuation(contract: Contract): PR[Double] = contract match {
+    case Zero() => K(0)
+    case One(currency) => Exch(currency)
+    case Give(c: Contract) => LiftPR((a: Double) => -1 * a, contractValuation(c))
+    case Scale(o: Obs[Double], c: Contract) => Lift2PR((a: Double, b: Double) => a * b, observableValuation(o), contractValuation(c))
+    case And(c1: Contract, c2: Contract) => Lift2PR((a: Double, b: Double) => a + b, contractValuation(c1), contractValuation(c2))
+    case Or(c1: Contract, c2: Contract) => Lift2PR((a: Double, b: Double) => Math.max(a, b), contractValuation(c1), contractValuation(c2))
+    case Cond(o: Obs[Boolean], c1: Contract, c2: Contract) => CondPR(observableValuation(o), contractValuation(c1), contractValuation(c2))
+    case When(o: Obs[Boolean], c: Contract) => Disc(observableValuation(o), contractValuation(c))
+    case Anytime(o: Obs[Boolean], c: Contract) => Snell(observableValuation(o), contractValuation(c))
+    case Until(o: Obs[Boolean], c: Contract) => Absorb(observableValuation(o), contractValuation(c))
+  }
+  
   //Observable primitives
   abstract class Obs[A] {
     /*
@@ -57,6 +70,16 @@ class ComposingContracts {
   case class DateObs() extends Obs[LocalDate]
   //+,-,*,/
 
+
+  def observableValuation[A](observable: Obs[A]): PR[A] = observable match {
+    case Konst(k: A) => K(k)
+    case LiftObs(func, o: Obs[A]) => LiftPR(func, observableValuation(o))
+    case Lift2Obs(func, o1, o2) => Lift2PR(func, observableValuation(o1), observableValuation(o2))
+    case DateObs() => DatePR()
+    //+,-,*,/
+  }
+  
+  
   //Process primitives
   //type PR[A] = (LocalDate)=>A
   abstract class PR[A]
@@ -72,28 +95,7 @@ class ComposingContracts {
   //+,-,*,/
 
 
-  def contractValuation(contract: Contract): PR[Double] = contract match {
-    case Zero() => K(0)
-    case One(currency) => Exch(currency)
-    case Give(c: Contract) => LiftPR((a: Double) => -1 * a, contractValuation(c))
-    case Scale(o: Obs[Double], c: Contract) => Lift2PR((a: Double, b: Double) => a * b, observableValuation(o), contractValuation(c))
-    case And(c1: Contract, c2: Contract) => Lift2PR((a: Double, b: Double) => a + b, contractValuation(c1), contractValuation(c2))
-    case Or(c1: Contract, c2: Contract) => Lift2PR((a: Double, b: Double) => Math.max(a, b), contractValuation(c1), contractValuation(c2))
-    case Cond(o: Obs[Boolean], c1: Contract, c2: Contract) => CondPR(observableValuation(o), contractValuation(c1), contractValuation(c2))
-    case When(o: Obs[Boolean], c: Contract) => Disc(observableValuation(o), contractValuation(c))
-    case Anytime(o: Obs[Boolean], c: Contract) => Snell(observableValuation(o), contractValuation(c))
-    case Until(o: Obs[Boolean], c: Contract) => Absorb(observableValuation(o), contractValuation(c))
-  }
-
-  def observableValuation[A](observable: Obs[A]): PR[A] = observable match {
-    case Konst(k: A) => K(k)
-    case LiftObs(func, o: Obs[A]) => LiftPR(func, observableValuation(o))
-    case Lift2Obs(func, o1, o2) => Lift2PR(func, observableValuation(o1), observableValuation(o2))
-    case DateObs() => DatePR()
-    //+,-,*,/
-  }
-
-  def prValuation[A: ClassTag, B, C](pr: PR[A]): (LocalDate, Int) => A = pr match {
+  def prValuation[A](pr: PR[A]): (LocalDate, Int) => A = pr match {
     case K(k: A) => (date: LocalDate, latticeIdx: Int) => k
     case DatePR() => (date: LocalDate, latticeIdx: Int) => date
     case CondPR(cond: PR[Boolean], a: PR[A], b: PR[A]) => (date: LocalDate, latticeIdx: Int) => {
@@ -108,14 +110,19 @@ class ComposingContracts {
       }
     }
     case LiftPR(lifted, o) => (date: LocalDate, latticeIdx: Int) => {
-      val obs = prValuation(lifted)
-      obs(date, latticeIdx)
+      val obs = prValuation(o)
+      lifted(obs(date, latticeIdx))
+      
     }
-    case Lift2PR(lifted, o1, o2) =>
-    case Snell(o: PR[Boolean], c: PR[Double]) => K(1.0) //TODO: all exchange rates are zero until rest of the program works
-    case Disc(o: PR[Boolean], c: PR[Double]) => K(1.0) //TODO: all exchange rates are zero until rest of the program works
-    case Absorb(o: PR[Boolean], c: PR[Double]) => K(1.0) //TODO: all exchange rates are zero until rest of the program works
-    case Exch(curr: String] ) => K (1.0) //TODO: all exchange rates are zero until rest of the program works
+    case Lift2PR(lifted, o1, o2) => (date: LocalDate, latticeIdx: Int) => {
+      val obs1 = prValuation(o1)
+      val obs2 = prValuation(o2)
+      lifted(obs1(date, latticeIdx), obs1(date, latticeIdx))
+    }
+    case Exch(curr: String ) => (date: LocalDate, latticeIdx: Int) => { 1 }//TODO: all exchange rates are zero until rest of the program works
+    //case Disc(o: PR[Boolean], c: PR[Double]) => K(1.0) //TODO: all exchange rates are zero until rest of the program works
+    //case Snell(o: PR[Boolean], c: PR[Double]) => K(1.0) //TODO: all exchange rates are zero until rest of the program works
+    //case Absorb(o: PR[Boolean], c: PR[Double]) => K(1.0) //TODO: all exchange rates are zero until rest of the program works
   }
 
 
