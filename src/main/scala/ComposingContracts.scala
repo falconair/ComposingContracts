@@ -1,4 +1,4 @@
-import java.time.{LocalTime, Period, LocalDate, Duration}
+import java.time.{Period, LocalDate, Duration}
 import java.time.temporal.ChronoUnit
 import scala.reflect.ClassTag
 import java.util._
@@ -39,6 +39,57 @@ class ComposingContracts {
   case class Anytime  (cond: Obs[Boolean], contract: Contract)                       extends Contract
   case class Until    (cond: Obs[Boolean], contract: Contract)                       extends Contract
 
+  //Observable primitives
+  abstract class Obs[A] {
+
+    def +(that:Obs[A])(implicit n: Numeric[A]):Obs[A] = Lift2Obs((a:A,b:A)=> n.plus(a,b), this,that)
+    def -(that:Obs[A])(implicit n: Numeric[A]):Obs[A] = Lift2Obs((a:A,b:A)=> n.minus(a,b), this,that)
+    def *(that:Obs[A])(implicit n: Numeric[A]):Obs[A] = Lift2Obs((a:A,b:A)=> n.times(a,b), this,that)
+    //def /(that:Obs[A])(implicit n: Numeric[A]):Obs[A] = Lift2Obs((a:A,b:A)=> n.times(a,1.0/b), this,that)
+
+    def ==(that:Obs[A])(implicit n: Ordering[A]):Obs[Boolean] = Lift2Obs((a:A,b:A)=> n.==(a,b), this,that)
+    def !=(that:Obs[A])(implicit n: Ordering[A]):Obs[Boolean] = Lift2Obs((a:A,b:A)=> n.!=(a,b), this,that)
+    def >(that:Obs[A])(implicit n: Ordering[A]):Obs[Boolean] = Lift2Obs((a:A,b:A)=> n.gt(a,b), this,that)
+    def <(that:Obs[A])(implicit n: Ordering[A]):Obs[Boolean] = Lift2Obs((a:A,b:A)=> n.lt(a,b), this,that)
+    def >=(that:Obs[A])(implicit n: Ordering[A]):Obs[Boolean] = Lift2Obs((a:A,b:A)=> n.gteq(a,b), this,that)
+    def <=(that:Obs[A])(implicit n: Ordering[A]):Obs[Boolean] = Lift2Obs((a:A,b:A)=> n.lteq(a,b), this,that)
+
+  }
+  case class Konst[A]          (k: A)                                        extends Obs[A]
+  case class LiftObs[B, A]     (lifted: (B) => A, o: Obs[B])                 extends Obs[A]
+  case class Lift2Obs[C, B, A] (lifted: (C, B) => A, o1: Obs[C], o2: Obs[B]) extends Obs[A]
+  case class DateObs           ()                                            extends Obs[LocalDate]
+
+  //Process primitives
+  abstract class PR[A] {
+
+    def +(that:PR[A])(implicit n: Numeric[A]):PR[A] = Lift2PR((a:A,b:A)=> n.plus(a,b), this,that)
+    def -(that:PR[A])(implicit n: Numeric[A]):PR[A] = Lift2PR((a:A,b:A)=> n.minus(a,b), this,that)
+    def *(that:PR[A])(implicit n: Numeric[A]):PR[A] = Lift2PR((a:A,b:A)=> n.times(a,b), this,that)
+    //def /(that:PR[A])(implicit n: Numeric[A]):PR[A] = Lift2PR((a:A,b:A)=> n.times(a,1.0/b), this,that)
+
+    def ==(that:PR[A])(implicit n: Ordering[A]):PR[Boolean] = Lift2PR((a:A,b:A)=> n.==(a,b), this,that)
+    def !=(that:PR[A])(implicit n: Ordering[A]):PR[Boolean] = Lift2PR((a:A,b:A)=> n.!=(a,b), this,that)
+    def >(that:PR[A])(implicit n: Ordering[A]):PR[Boolean] = Lift2PR((a:A,b:A)=> n.gt(a,b), this,that)
+    def <(that:PR[A])(implicit n: Ordering[A]):PR[Boolean] = Lift2PR((a:A,b:A)=> n.lt(a,b), this,that)
+    def >=(that:PR[A])(implicit n: Ordering[A]):PR[Boolean] = Lift2PR((a:A,b:A)=> n.gteq(a,b), this,that)
+    def <=(that:PR[A])(implicit n: Ordering[A]):PR[Boolean] = Lift2PR((a:A,b:A)=> n.lteq(a,b), this,that)
+
+  }
+  case class K[A]             (k: A)                                      extends PR[A]
+  case class DatePR           ()                                          extends PR[LocalDate]
+  case class CondPR[A]        (cond: PR[Boolean], a: PR[A], b: PR[A])     extends PR[A]
+  case class LiftPR[B, A]     (lifted: (B) => A, o: PR[B])                extends PR[A]
+  case class Lift2PR[C, B, A] (lifted: (C, B) => A, o1: PR[C], o2: PR[B]) extends PR[A]
+  case class Snell[A]         (o: PR[Boolean], c: PR[Double])             extends PR[Double]
+  //case class Disc[A]          (o: PR[Boolean], c: PR[Double])             extends PR[Double]
+  case class Disc[A]          (date:LocalDate, c: PR[Double])             extends PR[Double]
+  case class Absorb[A]        (o: PR[Boolean], c: PR[Double])             extends PR[Double]
+  case class Exch[A]          (curr: String)                              extends PR[Double]
+
+  type RV[A] = (LocalDate, Int)=>A
+
+
   def contractValuation(contract: Contract): PR[Double] = contract match {
     case Zero() => K(0)
     case One(currency) => Exch(currency)
@@ -53,33 +104,6 @@ class ComposingContracts {
     case Anytime(o: Obs[Boolean], c: Contract) => Snell(observableValuation(o), contractValuation(c))
     case Until(o: Obs[Boolean], c: Contract) => Absorb(observableValuation(o), contractValuation(c))
   }
-  
-  //Observable primitives
-  abstract class Obs[A] {
-    /*
-     def +(that:Obs[A])(implicit n: Numeric[A]):Obs[A] = Lift2Obs((a:A,b:A)=> n.plus(a,b), this,that)
-     def -(that:Obs[A])(implicit n: Numeric[A]):Obs[A] = Lift2Obs((a:A,b:A)=> n.minus(a,b), this,that)
-     def *(that:Obs[A])(implicit n: Numeric[A]):Obs[A] = Lift2Obs((a:A,b:A)=> n.times(a,b), this,that)
-     //def /(that:Obs[A])(implicit n: Numeric[A]):Obs[A] = Lift2Obs((a:A,b:A)=> n.times(a,1/b), this,that)
-     
-     //def -[B](that:Obs[B]):Obs[A] = Lift2Obs((a:A,b:B)=> a-b, this,that)
-     //def *[B](that:Obs[B]):Obs[A] = Lift2Obs((a:A,b:B)=> a*b, this,that)
-     //def /[B](that:Obs[B]):Obs[A] = Lift2Obs((a:A,b:B)=> a/b, this,that)
-
-     //def ==[B](that:Obs[B]):Obs[Boolean] = Lift2Obs((a:A,b:B)=> a==b, this,that)
-     //def !=[B](that:Obs[B]):Obs[Boolean] = Lift2Obs((a:A,b:B)=> a!=b, this,that)
-     //def >[B](that:Obs[B]):Obs[Boolean] = Lift2Obs((a:A,b:B)=> a>b, this,that)
-     //def <[B](that:Obs[B]):Obs[Boolean] = Lift2Obs((a:A,b:B)=> a<b, this,that)
-     //def >=[B](that:Obs[B]):Obs[Boolean] = Lift2Obs((a:A,b:B)=> a>=b, this,that)
-     //def <=[B](that:Obs[B]):Obs[Boolean] = Lift2Obs((a:A,b:B)=> a<=b, this,that)
-     */
-  }
-  case class Konst[A]          (k: A)                                        extends Obs[A]
-  case class LiftObs[B, A]     (lifted: (B) => A, o: Obs[B])                 extends Obs[A]
-  case class Lift2Obs[C, B, A] (lifted: (C, B) => A, o1: Obs[C], o2: Obs[B]) extends Obs[A]
-  case class DateObs           ()                                            extends Obs[LocalDate]
-  //+,-,*,/
-
 
   def observableValuation[A](observable: Obs[A]): PR[A] = observable match {
     case Konst(k) => K(k)
@@ -88,31 +112,14 @@ class ComposingContracts {
     case DateObs() => DatePR()
     //+,-,*,/
   }
-  
-  
-  //Process primitives
-  abstract class PR[A]
-  case class K[A]             (k: A)                                      extends PR[A]
-  case class DatePR           ()                                          extends PR[LocalDate]
-  case class CondPR[A]        (cond: PR[Boolean], a: PR[A], b: PR[A])     extends PR[A]
-  case class LiftPR[B, A]     (lifted: (B) => A, o: PR[B])                extends PR[A]
-  case class Lift2PR[C, B, A] (lifted: (C, B) => A, o1: PR[C], o2: PR[B]) extends PR[A]
-  case class Snell[A]         (o: PR[Boolean], c: PR[Double])             extends PR[Double]
-  //case class Disc[A]          (o: PR[Boolean], c: PR[Double])             extends PR[Double]
-  case class Disc[A]          (date:LocalDate, c: PR[Double])             extends PR[Double]
-  case class Absorb[A]        (o: PR[Boolean], c: PR[Double])             extends PR[Double]
-  case class Exch[A]          (curr: String)                              extends PR[Double]
-  //+,-,*,/
 
-  type RV[A] = (LocalDate, Int)=>A
-
-  def prValuation[A](pr: PR[A]): RV[A] = pr match {
+  def prValuation[A](pr: PR[A], marketData:MarketData): RV[A] = pr match {
     case K(k) => (date: LocalDate, latticeIdx: Int) => k
     case DatePR() => (date: LocalDate, latticeIdx: Int) => date
     case CondPR(cond: PR[Boolean], a: PR[A], b: PR[A]) => {
-      val o = prValuation(cond)
-      val ca = prValuation(a)
-      val cb = prValuation(b)
+      val o = prValuation(cond,marketData)
+      val ca = prValuation(a,marketData)
+      val cb = prValuation(b,marketData)
       
       (date: LocalDate, latticeIdx: Int) => {
         if (o(date, latticeIdx)) ca(date, latticeIdx)
@@ -120,15 +127,18 @@ class ComposingContracts {
       }
     }
     case LiftPR(lifted, o) => {
-      val obs = prValuation(o)
+      val obs = prValuation(o,marketData)
       (date: LocalDate, latticeIdx: Int) => lifted(obs(date, latticeIdx))
     }
     case Lift2PR(lifted, o1, o2) => {
-      val obs1 = prValuation(o1)
-      val obs2 = prValuation(o2)
+      val obs1 = prValuation(o1,marketData)
+      val obs2 = prValuation(o2,marketData)
       (date: LocalDate, latticeIdx: Int) => lifted(obs1(date, latticeIdx), obs2(date, latticeIdx))
     }
-    case Exch(curr: String ) => (date: LocalDate, latticeIdx: Int) => { 1 }//TODO: all exchange rates are 1 until rest of the program works
+    case Exch(curr: String ) => {
+      val exchangeRate = marketData.exchangeRates(curr)
+      (date: LocalDate, latticeIdx: Int) => exchangeRate.get(ChronoUnit.DAYS.between (LocalDate.now (), date).toInt,latticeIdx)
+    }
     case Disc(date:LocalDate, c: PR[Double]) => {
       /*
        * Give contract and it's lattice, say foreign currency, lattice is full of values
@@ -140,28 +150,31 @@ class ComposingContracts {
       val interestRateVol = .1
       
       val daysUntilMaturity = ChronoUnit.DAYS.between(LocalDate.now(), date).toInt
-      val con = prValuation(c)
+      val con = prValuation(c,marketData)
       
-      val irLattice = BinomialLattice.binomialPriceTree(date,daysUntilMaturity,interestRate,interestRateVol)
+      //val irLattice = BinomialLattice.binomialPriceTree(date,daysUntilMaturity,interestRate,interestRateVol)
+      val irLattice = marketData.interestRate
       val valueLattice = BinomialLattice.populate(date,daysUntilMaturity,(i:Int, j:Int)=>con(ChronoUnit.DAYS.addTo(LocalDate.now(),i),j))
       val discountedLattice = BinomialLattice.discount(valueLattice,irLattice)
 
-      println("irLattice")
-      irLattice.printLattice()
-      println("valueLattice")
-      valueLattice.printLattice()
-      println("discountedLattice")
-      discountedLattice.printLattice()
+      //println("irLattice")
+      //irLattice.printLattice()
+      //println("valueLattice")
+      //valueLattice.printLattice()
+      //println("discountedLattice")
+      //discountedLattice.printLattice()
 
       (date: LocalDate, latticeIdx: Int) => discountedLattice.get(ChronoUnit.DAYS.between (LocalDate.now (), date).toInt,latticeIdx)
     }
     //case Snell(o: PR[Boolean], c: PR[Double]) => K(1.0) //TODO: 
     //case Absorb(o: PR[Boolean], c: PR[Double]) => K(1.0) //TODO: 
   }
+
+  case class MarketData(interestRate:BinomialLattice[Double], exchangeRates:collection.mutable.Map[String,BinomialLattice[Double]])
 }
 
 object Main extends App {
-  
+
   val cc = new ComposingContracts
 
   //val lattice = BinomialLattice.binomialPriceTree(LocalDate.now.plus(1,ChronoUnit.YEARS),3,30, .25)
@@ -174,8 +187,28 @@ object Main extends App {
   //def at(date: LocalDate): cc.Obs[Boolean] = cc.Lift2Obs((a: LocalDate, b: LocalDate) => a.compareTo(b) == 0, cc.DateObs(), cc.Konst(date))
 
   //Tests
+  val exchangeRates = collection.mutable.Map(
+    "USD" -> BinomialLattice.binomialPriceTree(LocalDate.now().plus(1,ChronoUnit.YEARS),365,1,0),
+    "GBS" -> BinomialLattice.binomialPriceTree(LocalDate.now().plus(1,ChronoUnit.YEARS),365,1.55,.0467),
+    "EUR" -> BinomialLattice.binomialPriceTree(LocalDate.now().plus(1,ChronoUnit.YEARS),365,1.21,.0515)
+  )
+  val marketData = cc.MarketData(
+    BinomialLattice.binomialPriceTree(LocalDate.now().plus(1,ChronoUnit.YEARS),365,.05,.05), //interest rate (use a universal rate for now)
+    exchangeRates //exchange rates
+  )
+
+  //custom contract
+  def zcb(maturity:LocalDate, notional:Double, currency:String) = cc.When(maturity, cc.Scale(cc.Konst(notional),cc.One(currency)))
+  def europeanOption(at:LocalDate, c1:cc.Contract) = cc.When(at,cc.Or(c1,cc.Zero()))
+  //def american(c:cc.Contract, date1:LocalDate, date2:LocalDate) = cc.Anytime(between(date1,date2),c)
+  //custom observable
+  //def between(date1:LocalDate, date2:LocalDate):cc.Obs[Boolean] = cc.Lift2Obs((a,b)=> a >= date1 && a <= date2, cc.Konst(date1), cc.Konst(date2))
+  //val msft:cc.Obs[Double] = BinomialLattice.binomialPriceTree(LocalDate.now().plus(1,ChronoUnit.YEARS),365,46.45,.2)
+
+  //portfolio test
   val portfolio = Array(
     cc.One("USD"),
+    cc.One("EUR"),
     cc.Scale(cc.Konst(-1),cc.One("USD")),
     cc.Give(cc.One("USD")),
     cc.Give(cc.Give(cc.One("USD"))),
@@ -183,12 +216,13 @@ object Main extends App {
     cc.And(cc.One("USD"), cc.Give(cc.One("USD"))),
     //cc.When(at(LocalDate.now().plus(2, ChronoUnit.DAYS)), cc.One("USD"))
     cc.When(LocalDate.now().plus(5, ChronoUnit.DAYS), cc.One("USD"))
+    //cc.When(LocalDate.now().plus(5, ChronoUnit.DAYS), cc.Scale(msft, cc.One("USD")))
   )
   
   for(contract <- portfolio){
     println("===========")
     val vp = cc.contractValuation(contract)
-    val rv = cc.prValuation(vp)
+    val rv = cc.prValuation(vp, marketData)
     println("Contract: "+contract)
     println("Value Process: "+vp)
     println("Random Variable: "+rv)
