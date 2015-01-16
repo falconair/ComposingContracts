@@ -32,6 +32,9 @@ import ComposingContractsLatticeImplementation._
 TODO:
 clean up Environment, 'lookup' is too generic
 actually price a stock options and compare to the real thing
+add optimizer: Give(Give(c)) == c, etc.
+narrow random process to BinomialLattice?
+separate binoialTree generation from lattice generation (one takes vol, other takes up factor directly)
  */
 object Main extends App {
   implicit val LocalDateOrdering = scala.math.Ordering.fromLessThan[java.time.LocalDate]{case (a,b) => (a compareTo b) < 0}
@@ -84,7 +87,7 @@ object Main extends App {
     "EBAY" -> ComposingContractsLatticeImplementation.binomialPriceTree(365,53.01,20.5)
   )
   val marketData = Environment(
-    ComposingContractsLatticeImplementation.binomialPriceTree(365,.05,.05), //interest rate (use a universal rate for now)
+    ComposingContractsLatticeImplementation.binomialPriceTree(365,.17,.05), //interest rate (use a universal rate for now)
     exchangeRates, //exchange rates
     lookup
   )
