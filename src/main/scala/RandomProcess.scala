@@ -31,6 +31,7 @@ trait RandomProcess[A]{
   }
   def size():Option[Int] = None//either bounded size or None
   def probability():Double = 0.5//?
+  def current():A = apply(0)(0)
 }
 trait RandomProcessMutable[A] extends RandomProcess[A]{
   def set(date:LocalDate, j:Int, value:A):Unit = set(ChronoUnit.DAYS.between(LocalDate.now(),date).toInt,j,value) //keep LocalDate for semantic clarity or switch to Int?
@@ -61,8 +62,5 @@ class RandomProcessBounded[A:ClassTag](_size:Int) extends RandomProcessMutable[A
   override def apply(i:Int) = apply(LocalDate.now().plusDays(i))
 }*/
 
-/*trait RV[A]{
-  def apply(i:Int):A
-  def expectedValue:A
-}*/
+
 }

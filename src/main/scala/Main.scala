@@ -42,22 +42,34 @@ object Main extends App {
 
   //custom contract
   def zcb(maturity:LocalDate, notional:Double, currency:String) = When(maturity, Scale(Const(notional),One(currency)))
+  def option(contract:Contract) = Or(contract,Zero())
   def europeanCallOption(at:LocalDate, c1:Contract, strike:Double) =
     When(
       at,
-      Or(And(c1,Give(Scale(Const(strike),One("USD")))), Zero())
+      option(And(c1,Give(Scale(Const(strike),One("USD")))))
+    )
+  def europeanPutOption(at:LocalDate, c1:Contract, strike:Double) =
+    When(
+      at,
+      option(And(Give(c1),Scale(Const(strike),One("USD"))))
     )
   def americanCallOption(at:LocalDate, c1:Contract, strike:Double) =
     Anytime(
       at,
-      Or(And(c1,Give(Scale(Const(strike),One("USD")))), Zero())
+      option(And(c1,Give(Scale(Const(strike),One("USD")))))
+    )
+  def americanPutOption(at:LocalDate, c1:Contract, strike:Double) =
+    Anytime(
+      at,
+      option(And(Give(c1),Scale(Const(strike),One("USD"))))
     )
 
   //custom observable
   def and(a:Obs[Boolean], b:Obs[Boolean]):Obs[Boolean] = Lift2[Boolean,Boolean,Boolean]((a,b)=>a && b, a, b)
   def between(date1:LocalDate, date2:LocalDate):Obs[Boolean] = and(Const(date1) >= DateObs(), Const(date2) <= DateObs())
-  val msftProcess = ComposingContractsLatticeImplementation.binomialPriceTree(365,1.21,.0515)
-  val msft = Scale(Lookup("MSFT"),One("USD"))
+  def stock(symbol:String) = Scale(Lookup(symbol),One("USD"))
+  def cash(amt:Double) = Scale(Const(amt),One("USD"))
+  val msft = stock("MSFT")
 
 
   //Tests
@@ -87,12 +99,13 @@ object Main extends App {
     ,Give(Give(One("USD")))
     ,And(One("USD"), One("USD"))
     ,And(One("USD"), Give(One("USD")))
-    //,cc.When(at(LocalDate.now().plus(2, ChronoUnit.DAYS)), cc.One("USD"))
     ,When(LocalDate.now(),One("USD"))
     ,When(LocalDate.now().plusDays(5),One("USD"))
-    //,cc.When(LocalDate.now().plus(5, ChronoUnit.DAYS), cc.Scale(msft, cc.One("USD")))
-    ,europeanCallOption(LocalDate.now().plusDays(5),One("USD"),.5)
-    //,americanOption(One("USD"),LocalDate.now().plusDays(10))
+    ,When(LocalDate.now().plusDays(5),cash(49))
+    ,europeanCallOption(LocalDate.now().plusDays(5),cash(49),50)
+    ,europeanPutOption(LocalDate.now().plusDays(5),cash(49),50)
+    ,americanCallOption(LocalDate.now().plusDays(5),stock("MSFT"),45)
+    ,americanPutOption(LocalDate.now().plusDays(5),stock("MSFT"),45)
   )
 
   for(contract <- portfolio){
@@ -101,7 +114,7 @@ object Main extends App {
     val rp = ComposingContractsLatticeImplementation.binomialValuation(propt, marketData)
     println("Contract: "+contract)
     println("Random Process(for optimization): "+propt)
-    println("Present val: "+rp(0)(0))
+    println("Present val: "+rp.current())
     println("Random Process: \n"+rp)
     //println("Random Variable contents: ")
     //rv.printLattice()
