@@ -79,9 +79,9 @@ object Main extends App {
     "EUR" -> ComposingContractsLatticeImplementation.binomialPriceTree(365,1.21,.0515)
   )
   val lookup = collection.mutable.Map(
-    "MSFT" -> ComposingContractsLatticeImplementation. binomialPriceTree(365,1,0),
-    "ORCL" -> ComposingContractsLatticeImplementation.binomialPriceTree(365,1.55,.0467),
-    "EBAY" -> ComposingContractsLatticeImplementation.binomialPriceTree(365,1.21,.0515)
+    "MSFT" -> ComposingContractsLatticeImplementation. binomialPriceTree(365,45.48,22.0),
+    "ORCL" -> ComposingContractsLatticeImplementation.binomialPriceTree(365,42.63,10.48),
+    "EBAY" -> ComposingContractsLatticeImplementation.binomialPriceTree(365,53.01,20.5)
   )
   val marketData = Environment(
     ComposingContractsLatticeImplementation.binomialPriceTree(365,.05,.05), //interest rate (use a universal rate for now)
