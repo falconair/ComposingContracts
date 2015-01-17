@@ -1,4 +1,3 @@
-import RandomVariable._
 import scala.collection.mutable.ListBuffer//may need to 'grow' lattice on-demand, else just use Array
 import scala.reflect.ClassTag
 
@@ -7,6 +6,9 @@ import scala.reflect.ClassTag
   * @author Shahbaz Chaudhary (shahbazc gmail com)
   *
   */
+package object BinomialLattice{
+  type RandomVariable[A] = (Int)=>A
+}
 package BinomialLattice {
 
 import java.text.DecimalFormat

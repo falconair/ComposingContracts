@@ -3,7 +3,7 @@ import scala.math.Ordering.Implicits._
 
 
 import ComposingContracts._
-import ComposingContractsLatticeImplementation._
+import LatticeImplementation._
 
 /** *
   *

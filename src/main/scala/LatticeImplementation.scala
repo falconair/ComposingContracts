@@ -8,7 +8,7 @@ import BinomialLattice._
   * @author Shahbaz Chaudhary (shahbazc gmail com)
   *
   */
-package ComposingContractsLatticeImplementation{
+package LatticeImplementation{
 
 
 //Process optimization (declarative) layer
