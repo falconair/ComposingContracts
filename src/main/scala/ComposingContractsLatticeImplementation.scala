@@ -2,7 +2,7 @@ import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
 import ComposingContracts._
-import RandomProcess._
+import BinomialLattice._
 /** *
   *
   * @author Shahbaz Chaudhary (shahbazc gmail com)
@@ -41,9 +41,9 @@ case class Exch[A]          (curr: String)                                    ex
 //case class Project[A] //if discount calculates front to back, project goes from back to front...for arbitrary RP like stocks
 
 //Why does type have to be bounded??
-case class Environment(interestRate:RandomProcessBounded[Double],
-                       exchangeRates:collection.mutable.Map[String,RandomProcessBounded[Double]],
-                       lookup:collection.mutable.Map[String,RandomProcessBounded[Double]])
+case class Environment(interestRate:BinomialLatticeBounded[Double],
+                       exchangeRates:collection.mutable.Map[String,BinomialLatticeBounded[Double]],
+                       lookup:collection.mutable.Map[String,BinomialLatticeBounded[Double]])
 
 //TODO: move random process to different package
 
@@ -74,28 +74,28 @@ object ComposingContractsLatticeImplementation {
   //TODO: implementation function which produces Date=>RV, for monte carlo, different function needed
   //each 'case' should be its own function
   //binomial lattice just serves as an implemeentation of date=>rv, could be cachable, lazy, etc.
-  def binomialValuation[A](pr: PROpt[A], marketData: Environment): RandomProcess[A] = pr match {
-    case ConstPR(k) => new RandomProcessMemoryLess[A]((_) => (_) => k)
-    case DatePR() => new RandomProcessMemoryLess[A]((date: LocalDate) => (_) => date)
+  def binomialValuation[A](pr: PROpt[A], marketData: Environment): BinomialLattice[A] = pr match {
+    case ConstPR(k) => new ConstantBL(k)
+    case DatePR() => new PassThroughBL((date:LocalDate)=>(idx:Int)=>date)
     case CondPR(cond: PROpt[Boolean], a: PROpt[A], b: PROpt[A]) => {
       val o = binomialValuation(cond, marketData)
       val ca = binomialValuation(a, marketData)
       val cb = binomialValuation(b, marketData)
 
-      new RandomProcessMemoryLess[A](
+      new PassThroughBL[A](
         (date: LocalDate) => (idx: Int) => if (o(date)(idx)) ca(date)(idx) else cb(date)(idx)
       )
     }
     case LiftPR(lifted, o) => {
       val obs = binomialValuation(o, marketData)
-      new RandomProcessMemoryLess[A](
+      new PassThroughBL[A](
         (date: LocalDate) => (idx: Int) => lifted(obs(date)(idx))
       )
     }
     case Lift2PR(lifted, o1, o2) => {
       val obs1 = binomialValuation(o1, marketData)
       val obs2 = binomialValuation(o2, marketData)
-      new RandomProcessMemoryLess[A](
+      new PassThroughBL[A](
         (date: LocalDate) => (idx: Int) => lifted(obs1(date)(idx), obs2(date)(idx))
       )
     }
@@ -104,7 +104,7 @@ object ComposingContractsLatticeImplementation {
     }
     case Exch(curr: String) => {
       val exchangeRate = marketData.exchangeRates(curr)
-      new RandomProcessMemoryLess[A](
+      new PassThroughBL[A](
         (date: LocalDate) => (idx: Int) => exchangeRate(date)(idx)
       )
     }
@@ -120,62 +120,49 @@ object ComposingContractsLatticeImplementation {
       val interestRates = marketData.interestRate
 
       //TODO: extract out this logic
-      val _process = new RandomProcessBounded[Double](daysUntilMaturity+1)//daysUntilMaturity+1 because if contract matures today, it still needs today's valuation
-      for (j <- 0 to daysUntilMaturity ) _process.set(daysUntilMaturity , j, con(date)(j) ) //set terminal to contract value on maturity
+      val _process = new PassThroughBoundedBL[Double]((date:LocalDate)=>(idx:Int)=>con(date)(idx),daysUntilMaturity+1)//daysUntilMaturity+1 because if contract matures today, it still needs today's valuation
       discount(_process,interestRates)
     }
     case Snell(date: LocalDate, c: PROpt[Double]) => {
-      /*
-     * Give contract and it's lattice, say foreign currency, lattice is full of values
-     * for wrong dates, set contract lattice values to zero, only values remain at date
-     * starting with date-1, work backwards: average of child nodes, take present value using interest rate lattice at corresponding node
-     */
-
       val daysUntilMaturity = ChronoUnit.DAYS.between(LocalDate.now(), date).toInt
       val con = binomialValuation(c, marketData)
       val interestRates = marketData.interestRate
 
       //TODO: extract out this logic
-      val _process = new RandomProcessBounded[Double](daysUntilMaturity+1)//daysUntilMaturity+1 because if contract matures today, it still needs today's valuation
+      val _process = new PassThroughBoundedBL[Double]((date:LocalDate)=>(idx:Int)=>con(date)(idx),daysUntilMaturity+1)//daysUntilMaturity+1 because if contract matures today, it still needs today's valuation
+      discount(_process,interestRates)
+
+      /*val daysUntilMaturity = ChronoUnit.DAYS.between(LocalDate.now(), date).toInt
+      val con = binomialValuation(c, marketData)
+      val interestRates = marketData.interestRate
+
+      //TODO: extract out this logic
+      val _process = new BinomialLatticeBounded[Double](daysUntilMaturity+1)//daysUntilMaturity+1 because if contract matures today, it still needs today's valuation
       for (j <- 0 to daysUntilMaturity ) _process.set(daysUntilMaturity , j, con(date)(j) ) //set terminal to contract value on maturity
       val discounted = discount(_process,interestRates)
-      val result = new RandomProcessBounded[Double](daysUntilMaturity+1)
+      val result = new BinomialLatticeBounded[Double](daysUntilMaturity+1)
       for (i <- 0 to daysUntilMaturity ) for(j <- 0 to i) result.set(i , j, Math.max(discounted(i)(j), con(i)(j)))
-      result
+      result*/
     }
-    //case ReturnPR(transform) => (date: LocalDate) => new RandomProcessPassThrough(transform)
+    //case ReturnPR(transform) => (date: LocalDate) => new BinomialLatticePassThrough(transform)
     //case Absorb(o: PR[Boolean], cond: PROpt[Boolean], c: PR[Double]) => K(1.0) //TODO:
   }
 
   //move random process functions to different package
   //generalize to some sort of left generator?
-  def binomialPriceTree(days:Int, startVal:Double, annualizedVolatility:Double, probability:Double=0.5):RandomProcessBounded[Double] = {
-    val process = new RandomProcessBounded[Double](days)
+  def binomialPriceTree(days:Int, startVal:Double, annualizedVolatility:Double, probability:Double=0.5):BinomialLatticeBounded[Double] = {
 
     val businessDaysInYear = 365.0
     val fractionOfYear = days/(businessDaysInYear*1.0)
     val changeFactorUp = Math.exp(annualizedVolatility* 1.0 * Math.sqrt(fractionOfYear))
-    val changeFactorDown = 1/changeFactorUp
-
-    for(i <- 0 to (process.size().get-1)){
-      for(j <- 0 to i){
-        if(i == 0) process.set(i,j, startVal)
-        else{
-          val prevNode = if((j-1)<0) 0 else j-1
-          val prevValue = process(i-1)(prevNode)
-          val isUp = j > prevNode
-          val factor = if(isUp) changeFactorUp else changeFactorDown
-          process.set(i,j,prevValue * factor)
-        }
-      }
-    }
+    val process = new GenerateBL(days+1,startVal,changeFactorUp)
     process
   }
 
   //generalize to some sort of right generator?
-  def discount(toDiscount:RandomProcessBounded[Double], interestRates:RandomProcess[Double]):RandomProcess[Double] = {
+  /*def discount(toDiscount:BinomialLatticeBounded[Double], interestRates:BinomialLattice[Double]):BinomialLattice[Double] = {
     val size = toDiscount.size().get
-    val _process = new RandomProcessBounded[Double](size)
+    val _process = new BinomialLatticeBounded[Double](size)
     for (j <- 0 to size - 1) _process.set(size - 1, j, toDiscount(size-1)(j)) //set terminal to contract value on maturity
     for (i <- (0 to (size - 2)).reverse) {
       for (j <- 0 to i) {
@@ -186,6 +173,16 @@ object ComposingContractsLatticeImplementation {
       }
     }
     _process
+  }*/
+
+  def discount(toDiscount:BinomialLatticeBounded[Double], interestRates:BinomialLattice[Double]):BinomialLattice[Double] = {
+    val averaged = new PropagateLeftBL[Double](toDiscount, (x,y)=>(x+y)/2.0)
+    val zipped = averaged.zip(interestRates)
+    zipped.map[Double](avg_ir=>{
+      val avg = avg_ir._1
+      val ir = avg_ir._2
+      avg/(1.0+ir)
+    })
   }
 }
 

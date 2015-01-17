@@ -38,7 +38,6 @@ separate binoialTree generation from lattice generation (one takes vol, other ta
  */
 object Main extends App {
   implicit val LocalDateOrdering = scala.math.Ordering.fromLessThan[java.time.LocalDate]{case (a,b) => (a compareTo b) < 0}
-  println(LocalDate.now()>LocalDate.now())
 
   //Custom combinators
   //def at(date: LocalDate): cc.Obs[Boolean] = cc.Lift2Obs((a: LocalDate, b: LocalDate) => a.compareTo(b) == 0, cc.DateObs(), cc.Konst(date))
@@ -117,7 +116,7 @@ object Main extends App {
     val rp = ComposingContractsLatticeImplementation.binomialValuation(propt, marketData)
     println("Contract: "+contract)
     println("Random Process(for optimization): "+propt)
-    println("Present val: "+rp.current())
+    println("Present val: "+rp.startVal())
     println("Random Process: \n"+rp)
     //println("Random Variable contents: ")
     //rv.printLattice()

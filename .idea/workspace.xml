@@ -2,9 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="3f7876a0-a01e-4bd6-8632-669c66461375" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/RandomProcess.scala" afterPath="$PROJECT_DIR$/src/main/scala/RandomProcess.scala" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build.sbt" afterPath="$PROJECT_DIR$/build.sbt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/modules/composingcontracts.iml" afterPath="$PROJECT_DIR$/.idea/modules/composingcontracts.iml" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/SBT__org_scala_lang_scala_library_2_10_4_jar.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/src/test/scala/RandomProcessTest.scala" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/BinomialLattice.scala" afterPath="$PROJECT_DIR$/src/main/scala/BinomialLattice.scala" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/test/scala/BinomialLatticeTest.scala" afterPath="$PROJECT_DIR$/src/test/scala/BinomialLatticeTest.scala" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/ComposingContractsLatticeImplementation.scala" afterPath="$PROJECT_DIR$/src/main/scala/ComposingContractsLatticeImplementation.scala" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/Main.scala" afterPath="$PROJECT_DIR$/src/main/scala/Main.scala" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="ComposingContracts.iws" />
@@ -32,37 +35,13 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="Main.scala" pinned="false" current-in-tab="false">
+      <file leaf-file-name="Main.scala" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/scala/Main.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="75" max-vertical-offset="1980">
-              <caret line="36" column="102" selection-start-line="36" selection-start-column="102" selection-end-line="36" selection-end-column="102" />
+            <state vertical-scroll-proportion="0.3108108" vertical-offset="1225" max-vertical-offset="1965">
+              <caret line="97" column="4" selection-start-line="97" selection-start-column="4" selection-end-line="97" selection-end-column="4" />
               <folding>
                 <element signature="e#0#26#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="RandomProcessTest.scala" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/test/scala/RandomProcessTest.scala">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="450">
-              <caret line="12" column="29" selection-start-line="12" selection-start-column="24" selection-end-line="12" selection-end-column="29" />
-              <folding>
-                <element signature="e#0#86#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ComposingContracts.scala" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/scala/ComposingContracts.scala">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="600">
-              <caret line="7" column="28" selection-start-line="7" selection-start-column="28" selection-end-line="7" selection-end-column="28" />
-              <folding>
-                <element signature="e#915#2083#1" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -71,11 +50,9 @@
       <file leaf-file-name="ComposingContractsLatticeImplementation.scala" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/scala/ComposingContractsLatticeImplementation.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="2003" max-vertical-offset="2955">
-              <caret line="173" column="0" selection-start-line="173" selection-start-column="0" selection-end-line="173" selection-end-column="0" />
-              <folding>
-                <element signature="e#0#26#0" expanded="true" />
-              </folding>
+            <state vertical-scroll-proportion="-38.88889" vertical-offset="1245" max-vertical-offset="2850">
+              <caret line="157" column="39" selection-start-line="157" selection-start-column="39" selection-end-line="157" selection-end-column="39" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -83,11 +60,9 @@
       <file leaf-file-name="RandomVariable.scala" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/scala/RandomVariable.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="285">
+            <state vertical-scroll-proportion="0.0" vertical-offset="135" max-vertical-offset="285">
               <caret line="9" column="1" selection-start-line="9" selection-start-column="1" selection-end-line="9" selection-end-column="1" />
-              <folding>
-                <element signature="n#!!doc" expanded="true" />
-              </folding>
+              <folding />
             </state>
           </provider>
         </entry>
@@ -95,26 +70,19 @@
       <file leaf-file-name="RandomProcess.scala" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/scala/RandomProcess.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1080">
-              <caret line="43" column="17" selection-start-line="43" selection-start-column="17" selection-end-line="43" selection-end-column="17" />
-              <folding>
-                <element signature="n#!!doc" expanded="true" />
-                <element signature="e#95#121#0" expanded="true" />
-              </folding>
+            <state vertical-scroll-proportion="0.0" vertical-offset="615" max-vertical-offset="1080">
+              <caret line="41" column="30" selection-start-line="41" selection-start-column="30" selection-end-line="41" selection-end-column="64" />
+              <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="BinomialLattice.scala" pinned="false" current-in-tab="true">
+      <file leaf-file-name="BinomialLattice.scala" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/scala/BinomialLattice.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.033783782" vertical-offset="710" max-vertical-offset="1455">
-              <caret line="71" column="42" selection-start-line="71" selection-start-column="42" selection-end-line="71" selection-end-column="42" />
-              <folding>
-                <element signature="e#0#23#0" expanded="true" />
-                <element signature="e#1596#1973#0" expanded="false" />
-                <element signature="e#2112#2417#0" expanded="false" />
-              </folding>
+            <state vertical-scroll-proportion="0.0" vertical-offset="1090" max-vertical-offset="1830">
+              <caret line="116" column="41" selection-start-line="116" selection-start-column="41" selection-end-line="116" selection-end-column="41" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -122,11 +90,9 @@
       <file leaf-file-name="BinomialLatticeTest.scala" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/test/scala/BinomialLatticeTest.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="975">
-              <caret line="29" column="6" selection-start-line="29" selection-start-column="6" selection-end-line="29" selection-end-column="6" />
-              <folding>
-                <element signature="e#0#29#0" expanded="true" />
-              </folding>
+            <state vertical-scroll-proportion="0.0" vertical-offset="324" max-vertical-offset="1065">
+              <caret line="42" column="30" selection-start-line="42" selection-start-column="30" selection-end-line="42" selection-end-column="30" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -140,14 +106,14 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/src/main/scala/ComposingContracts.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala/ComposingContractsLatticeImplementation.scala" />
         <option value="$PROJECT_DIR$/src/main/scala/RandomVariable.scala" />
         <option value="$PROJECT_DIR$/src/test/scala/RandomProcessTest.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala/Main.scala" />
         <option value="$PROJECT_DIR$/build.sbt" />
         <option value="$PROJECT_DIR$/src/main/scala/RandomProcess.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala/BinomialLattice.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/ComposingContractsLatticeImplementation.scala" />
         <option value="$PROJECT_DIR$/src/test/scala/BinomialLatticeTest.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/BinomialLattice.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/Main.scala" />
       </list>
     </option>
   </component>
@@ -178,8 +144,8 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="PackagesPane" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -290,7 +256,7 @@
     <property name="recentsLimit" value="5" />
     <property name="dynamic.classpath" value="false" />
   </component>
-  <component name="RunManager" selected="ScalaTest.BinomialLatticeTest">
+  <component name="RunManager" selected="Application.Main">
     <configuration default="false" name="Main" type="Application" factoryName="Application" temporary="true">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
       <option name="MAIN_CLASS_NAME" value="Main" />
@@ -564,8 +530,8 @@
     </list>
     <recent_temporary>
       <list size="3">
-        <item index="0" class="java.lang.String" itemvalue="ScalaTest.BinomialLatticeTest" />
-        <item index="1" class="java.lang.String" itemvalue="Application.Main" />
+        <item index="0" class="java.lang.String" itemvalue="Application.Main" />
+        <item index="1" class="java.lang.String" itemvalue="ScalaTest.BinomialLatticeTest" />
         <item index="2" class="java.lang.String" itemvalue="ScalaTest.RandomProcessTest" />
       </list>
     </recent_temporary>
@@ -648,7 +614,6 @@
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32959184" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2622449" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.21632653" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
@@ -667,6 +632,7 @@
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
@@ -688,7 +654,7 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="12" />
+      <option name="time" value="16" />
     </breakpoint-manager>
     <watches-manager>
       <configuration name="ScalaTestRunConfiguration">
@@ -697,6 +663,9 @@
         <watch expression="i+0" language="Scala" custom="" />
         <watch expression="arr" language="Scala" custom="" />
       </configuration>
+      <configuration name="Application">
+        <watch expression="averaged.toString()" language="Scala" custom="" />
+      </configuration>
     </watches-manager>
   </component>
   <component name="antWorkspaceConfiguration">
@@ -704,13 +673,61 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/src/main/scala/Main.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="540" max-vertical-offset="1980">
+          <caret line="36" column="102" selection-start-line="36" selection-start-column="102" selection-end-line="36" selection-end-column="102" />
+          <folding>
+            <element signature="e#0#26#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/scala/ComposingContracts.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="105" max-vertical-offset="825">
+          <caret line="7" column="28" selection-start-line="7" selection-start-column="28" selection-end-line="7" selection-end-column="28" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/ComposingContractsLatticeImplementation.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="2670" max-vertical-offset="2910">
+          <caret line="178" column="23" selection-start-line="178" selection-start-column="23" selection-end-line="178" selection-end-column="23" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/RandomVariable.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="135" max-vertical-offset="285">
+          <caret line="9" column="1" selection-start-line="9" selection-start-column="1" selection-end-line="9" selection-end-column="1" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/RandomProcess.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="615" max-vertical-offset="1080">
+          <caret line="41" column="30" selection-start-line="41" selection-start-column="30" selection-end-line="41" selection-end-column="64" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/BinomialLattice.scala">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="100">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="e#915#2083#1" expanded="false" />
-          </folding>
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/scala/BinomialLatticeTest.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="570" max-vertical-offset="975">
+          <caret line="38" column="47" selection-start-line="38" selection-start-column="47" selection-end-line="38" selection-end-column="47" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -718,9 +735,15 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="100">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="e#915#2083#1" expanded="false" />
-          </folding>
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/ComposingContracts.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="100">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -731,33 +754,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/scala/RandomProcessTest.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="450">
-          <caret line="12" column="29" selection-start-line="12" selection-start-column="24" selection-end-line="12" selection-end-column="29" />
-          <folding>
-            <element signature="e#0#86#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/Main.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="75" max-vertical-offset="1980">
-          <caret line="36" column="102" selection-start-line="36" selection-start-column="102" selection-end-line="36" selection-end-column="102" />
-          <folding>
-            <element signature="e#0#26#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/scala/RandomVariable.scala">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="285">
           <caret line="9" column="1" selection-start-line="9" selection-start-column="1" selection-end-line="9" selection-end-column="1" />
-          <folding>
-            <element signature="n#!!doc" expanded="true" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -765,18 +766,14 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="225">
           <caret line="9" column="0" selection-start-line="9" selection-start-column="0" selection-end-line="9" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/scala/RandomProcess.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="340" max-vertical-offset="1080">
-          <caret line="43" column="17" selection-start-line="43" selection-start-column="17" selection-end-line="43" selection-end-column="17" />
-          <folding>
-            <element signature="n#!!doc" expanded="true" />
-            <element signature="e#95#121#0" expanded="true" />
-          </folding>
+        <state vertical-scroll-proportion="0.0" vertical-offset="135" max-vertical-offset="1080">
+          <caret line="41" column="30" selection-start-line="41" selection-start-column="30" selection-end-line="41" selection-end-column="64" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -784,40 +781,40 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="600">
           <caret line="7" column="28" selection-start-line="7" selection-start-column="28" selection-end-line="7" selection-end-column="28" />
-          <folding>
-            <element signature="e#915#2083#1" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/ComposingContractsLatticeImplementation.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="2003" max-vertical-offset="2955">
-          <caret line="173" column="0" selection-start-line="173" selection-start-column="0" selection-end-line="173" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#26#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/scala/BinomialLatticeTest.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="975">
-          <caret line="29" column="6" selection-start-line="29" selection-start-column="6" selection-end-line="29" selection-end-column="6" />
-          <folding>
-            <element signature="e#0#29#0" expanded="true" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/scala/BinomialLattice.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.033783782" vertical-offset="710" max-vertical-offset="1455">
-          <caret line="71" column="42" selection-start-line="71" selection-start-column="42" selection-end-line="71" selection-end-column="42" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="1090" max-vertical-offset="1830">
+          <caret line="116" column="41" selection-start-line="116" selection-start-column="41" selection-end-line="116" selection-end-column="41" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/scala/BinomialLatticeTest.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="324" max-vertical-offset="1065">
+          <caret line="42" column="30" selection-start-line="42" selection-start-column="30" selection-end-line="42" selection-end-column="30" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/ComposingContractsLatticeImplementation.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-38.88889" vertical-offset="1245" max-vertical-offset="2850">
+          <caret line="157" column="39" selection-start-line="157" selection-start-column="39" selection-end-line="157" selection-end-column="39" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/Main.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.3108108" vertical-offset="1225" max-vertical-offset="1965">
+          <caret line="97" column="4" selection-start-line="97" selection-start-column="4" selection-end-line="97" selection-end-column="4" />
           <folding>
-            <element signature="e#0#23#0" expanded="true" />
-            <element signature="e#1596#1973#0" expanded="false" />
-            <element signature="e#2112#2417#0" expanded="false" />
+            <element signature="e#0#26#0" expanded="true" />
           </folding>
         </state>
       </provider>
