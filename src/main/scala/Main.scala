@@ -43,28 +43,15 @@ object Main extends App {
   //def at(date: LocalDate): cc.Obs[Boolean] = cc.Lift2Obs((a: LocalDate, b: LocalDate) => a.compareTo(b) == 0, cc.DateObs(), cc.Konst(date))
 
   //custom contract
+  def usd(amount:Double) = Scale(Const(amount),One("USD"))
+  def buy(contract:Contract, amount:Double) = And(contract,Give(usd(amount)))
+  def sell(contract:Contract, amount:Double) = And(Give(contract),usd(amount))
   def zcb(maturity:LocalDate, notional:Double, currency:String) = When(maturity, Scale(Const(notional),One(currency)))
   def option(contract:Contract) = Or(contract,Zero())
-  def europeanCallOption(at:LocalDate, c1:Contract, strike:Double) =
-    When(
-      at,
-      option(And(c1,Give(Scale(Const(strike),One("USD")))))
-    )
-  def europeanPutOption(at:LocalDate, c1:Contract, strike:Double) =
-    When(
-      at,
-      option(And(Give(c1),Scale(Const(strike),One("USD"))))
-    )
-  def americanCallOption(at:LocalDate, c1:Contract, strike:Double) =
-    Anytime(
-      at,
-      option(And(c1,Give(Scale(Const(strike),One("USD")))))
-    )
-  def americanPutOption(at:LocalDate, c1:Contract, strike:Double) =
-    Anytime(
-      at,
-      option(And(Give(c1),Scale(Const(strike),One("USD"))))
-    )
+  def europeanCallOption(at:LocalDate, c1:Contract, strike:Double) = When(at, option(buy(c1,strike)))
+  def europeanPutOption(at:LocalDate, c1:Contract, strike:Double) = When(at, option(sell(c1,strike)))
+  def americanCallOption(at:LocalDate, c1:Contract, strike:Double) = Anytime(at, option(buy(c1,strike)))
+  def americanPutOption(at:LocalDate, c1:Contract, strike:Double) = Anytime(at, option(sell(c1,strike)))
 
   //custom observable
   def and(a:Obs[Boolean], b:Obs[Boolean]):Obs[Boolean] = Lift2[Boolean,Boolean,Boolean]((a,b)=>a && b, a, b)
@@ -76,26 +63,30 @@ object Main extends App {
 
   //Tests
   val exchangeRates = collection.mutable.Map(
-    "USD" -> ComposingContractsLatticeImplementation. binomialPriceTree(365,1,0),
-    "GBP" -> ComposingContractsLatticeImplementation.binomialPriceTree(365,1.55,.0467),
-    "EUR" -> ComposingContractsLatticeImplementation.binomialPriceTree(365,1.21,.0515)
+    "USD" -> LatticeImplementation.binomialPriceTree(365,1,0),
+    "GBP" -> LatticeImplementation.binomialPriceTree(365,1.55,.0467),
+    "EUR" -> LatticeImplementation.binomialPriceTree(365,1.21,.0515)
   )
   val lookup = collection.mutable.Map(
-    "MSFT" -> ComposingContractsLatticeImplementation. binomialPriceTree(365,45.48,22.0),
-    "ORCL" -> ComposingContractsLatticeImplementation.binomialPriceTree(365,42.63,10.48),
-    "EBAY" -> ComposingContractsLatticeImplementation.binomialPriceTree(365,53.01,20.5)
+    "MSFT" -> LatticeImplementation.binomialPriceTree(365,45.48,.220),
+    "ORCL" -> LatticeImplementation.binomialPriceTree(365,42.63,.1048),
+    "EBAY" -> LatticeImplementation.binomialPriceTree(365,53.01,.205)
   )
   val marketData = Environment(
-    ComposingContractsLatticeImplementation.binomialPriceTree(365,.17,.05), //interest rate (use a universal rate for now)
+    LatticeImplementation.binomialPriceTree(365,.15,.05), //interest rate (use a universal rate for now)
     exchangeRates, //exchange rates
     lookup
   )
 
-
   //portfolio test
   val portfolio = Array(
     One("USD")
-    ,One("EUR")
+    ,stock("MSFT")
+    ,buy(stock("MSFT"),45)
+    //,sell(stock("MSFT"),45)
+    ,option(buy(stock("MSFT"),45))
+    //,option(sell(stock("MSFT"),45))
+    /*,One("EUR")
     ,Scale(Const(-1),One("USD"))
     ,Give(One("USD"))
     ,Give(Give(One("USD")))
@@ -104,22 +95,20 @@ object Main extends App {
     ,When(LocalDate.now(),One("USD"))
     ,When(LocalDate.now().plusDays(5),One("USD"))
     ,When(LocalDate.now().plusDays(5),cash(49))
-    ,europeanCallOption(LocalDate.now().plusDays(5),cash(49),50)
-    ,europeanPutOption(LocalDate.now().plusDays(5),cash(49),50)
+    */,europeanCallOption(LocalDate.now().plusDays(5),stock("MSFT"),45)
+    //,europeanPutOption(LocalDate.now().plusDays(5),stock("MSFT"),45)
     ,americanCallOption(LocalDate.now().plusDays(5),stock("MSFT"),45)
-    ,americanPutOption(LocalDate.now().plusDays(5),stock("MSFT"),45)
+    //,americanPutOption(LocalDate.now().plusDays(5),stock("MSFT"),45)
   )
 
   for(contract <- portfolio){
     println("===========")
-    val propt = ComposingContractsLatticeImplementation.contractToPROpt(contract)
-    val rp = ComposingContractsLatticeImplementation.binomialValuation(propt, marketData)
+    val propt = LatticeImplementation.contractToPROpt(contract)
+    val rp = LatticeImplementation.binomialValuation(propt, marketData)
     println("Contract: "+contract)
     println("Random Process(for optimization): "+propt)
     println("Present val: "+rp.startVal())
     println("Random Process: \n"+rp)
-    //println("Random Variable contents: ")
-    //rv.printLattice()
   }
 
 }

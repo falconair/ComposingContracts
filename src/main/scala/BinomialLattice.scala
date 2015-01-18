@@ -61,6 +61,31 @@ trait BinomialLattice[A]{
     val formatter = new DecimalFormat("#.####")
     def size():Int
 
+    //TODO: repeated almost verbatim from BinomialLattice, there must be a better way
+    override def zip[B](lattice:BinomialLattice[B]):BinomialLatticeBounded[(A,B)] = {//map is probably a better name for this
+      new BinomialLatticeBounded[(A,B)] {
+        override def apply(i: Int): RandomVariable[(A,B)] = (j:Int)=>(BinomialLatticeBounded.this(i)(j),lattice(i)(j))
+        override def size() = BinomialLatticeBounded.this.size()
+      }
+    }
+    override def map[B](func:(A)=>B):BinomialLatticeBounded[B] = {//map is probably a better name for this
+      new BinomialLatticeBounded[B] {
+        override def apply(i: Int): RandomVariable[B] = (j:Int)=>func(BinomialLatticeBounded.this(i)(j))
+        override def size() = BinomialLatticeBounded.this.size()
+      }
+    }
+    override def lift[B,C](func:(A,B)=>C,lattice:BinomialLattice[B]):BinomialLatticeBounded[C] = {
+      new BinomialLatticeBounded[C] {
+        override def size() = BinomialLatticeBounded.this.size()
+        override def apply(i: Int): RandomVariable[C] = {
+          val lat1 = BinomialLatticeBounded.this(i)
+          val lat2 = lattice(i)
+          (j:Int)=>func(lat1(j),lat2(j))
+        }
+        //override def size() = BinomialLattice.this.size()
+      }
+    }
+
     override def toString() = {
         val str = new StringBuilder
         for(i <- 0 to size-1){

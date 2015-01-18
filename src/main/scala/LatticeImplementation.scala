@@ -48,7 +48,7 @@ case class Environment(interestRate:BinomialLatticeBounded[Double],
 //TODO: move random process to different package
 
 
-object ComposingContractsLatticeImplementation {
+object LatticeImplementation {
   def contractToPROpt(contract: Contract): PROpt[Double] = contract match {
     case Zero()                                => ConstPR(0)
     case One(currency)                         => Exch(currency)
@@ -71,9 +71,7 @@ object ComposingContractsLatticeImplementation {
     case Lookup(lookup)        => LookupPR(lookup)
   }
 
-  //TODO: implementation function which produces Date=>RV, for monte carlo, different function needed
-  //each 'case' should be its own function
-  //binomial lattice just serves as an implemeentation of date=>rv, could be cachable, lazy, etc.
+
   def binomialValuation[A](pr: PROpt[A], marketData: Environment): BinomialLattice[A] = pr match {
     case ConstPR(k) => new ConstantBL(k)
     case DatePR() => new PassThroughBL((date:LocalDate)=>(idx:Int)=>date)
@@ -109,42 +107,34 @@ object ComposingContractsLatticeImplementation {
       )
     }
     case Disc(date: LocalDate, c: PROpt[Double]) => {
-      /*
-     * Give contract and it's lattice, say foreign currency, lattice is full of values
-     * for wrong dates, set contract lattice values to zero, only values remain at date
-     * starting with date-1, work backwards: average of child nodes, take present value using interest rate lattice at corresponding node
-     */
-
       val daysUntilMaturity = ChronoUnit.DAYS.between(LocalDate.now(), date).toInt
       val con = binomialValuation(c, marketData)
       val interestRates = marketData.interestRate
 
-      //TODO: extract out this logic
       val _process = new PassThroughBoundedBL[Double]((date:LocalDate)=>(idx:Int)=>con(date)(idx),daysUntilMaturity+1)//daysUntilMaturity+1 because if contract matures today, it still needs today's valuation
       discount(_process,interestRates)
     }
     case Snell(date: LocalDate, c: PROpt[Double]) => {
+      /*
+      Take final column of the tree, discount it back one step. Take max of the discounted column and the original column, repeat.
+       */
       val daysUntilMaturity = ChronoUnit.DAYS.between(LocalDate.now(), date).toInt
       val con = binomialValuation(c, marketData)
       val interestRates = marketData.interestRate
 
-      //TODO: extract out this logic
-      val _process = new PassThroughBoundedBL[Double]((date:LocalDate)=>(idx:Int)=>con(date)(idx),daysUntilMaturity+1)//daysUntilMaturity+1 because if contract matures today, it still needs today's valuation
-      discount(_process,interestRates)
-
-      /*val daysUntilMaturity = ChronoUnit.DAYS.between(LocalDate.now(), date).toInt
-      val con = binomialValuation(c, marketData)
-      val interestRates = marketData.interestRate
-
-      //TODO: extract out this logic
-      val _process = new BinomialLatticeBounded[Double](daysUntilMaturity+1)//daysUntilMaturity+1 because if contract matures today, it still needs today's valuation
-      for (j <- 0 to daysUntilMaturity ) _process.set(daysUntilMaturity , j, con(date)(j) ) //set terminal to contract value on maturity
-      val discounted = discount(_process,interestRates)
-      val result = new BinomialLatticeBounded[Double](daysUntilMaturity+1)
-      for (i <- 0 to daysUntilMaturity ) for(j <- 0 to i) result.set(i , j, Math.max(discounted(i)(j), con(i)(j)))
-      result*/
+      val _process:BinomialLatticeBounded[Double] = new PassThroughBoundedBL[Double]((date:LocalDate)=>(idx:Int)=>con(date)(idx),daysUntilMaturity+1)//daysUntilMaturity+1 because if contract matures today, it still needs today's valuation
+      var result = _process
+      for(i <- 0 to _process.size()){
+        val discounted:BinomialLatticeBounded[Double] = discount(result,interestRates)
+        val contractAndDiscounted:BinomialLatticeBounded[(Double,Double)] = discounted.zip(_process)
+        result = contractAndDiscounted.map[Double]((cNd)=>{
+          val c = cNd._1
+          val d = cNd._2
+          Math.max(c,d)
+        })
+      }
+      result
     }
-    //case ReturnPR(transform) => (date: LocalDate) => new BinomialLatticePassThrough(transform)
     //case Absorb(o: PR[Boolean], cond: PROpt[Boolean], c: PR[Double]) => K(1.0) //TODO:
   }
 
@@ -175,8 +165,8 @@ object ComposingContractsLatticeImplementation {
     _process
   }*/
 
-  def discount(toDiscount:BinomialLatticeBounded[Double], interestRates:BinomialLattice[Double]):BinomialLattice[Double] = {
-    val averaged = new PropagateLeftBL[Double](toDiscount, (x,y)=>(x+y)/2.0)
+  def discount(toDiscount:BinomialLatticeBounded[Double], interestRates:BinomialLattice[Double]):BinomialLatticeBounded[Double] = {
+    val averaged = new PropagateLeftBL[Double](toDiscount, (x,y)=>(x+y)/2.0)//assume .5 probability
     val zipped = averaged.zip(interestRates)
     zipped.map[Double](avg_ir=>{
       val avg = avg_ir._1
