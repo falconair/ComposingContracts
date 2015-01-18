@@ -18,7 +18,7 @@ package ComposingContracts {
   case class Scale(scale: Obs[Double], contract: Contract) extends Contract
   case class When(date: LocalDate, contract: Contract) extends Contract
   case class Anytime(date: LocalDate, contract: Contract) extends Contract
-  case class Until(date: LocalDate, contract: Contract) extends Contract
+  //case class Until(date: LocalDate, contract: Contract) extends Contract
 
   //Observable primitives
   abstract class Obs[A] {

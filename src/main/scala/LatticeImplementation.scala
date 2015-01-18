@@ -38,7 +38,6 @@ case class Snell[A]         (date:LocalDate, c: PROpt[Double])                ex
 case class Disc[A]          (date:LocalDate, c: PROpt[Double])                extends PROpt[Double]
 case class Absorb[A]        (date:LocalDate, c: PROpt[Double])                extends PROpt[Double]
 case class Exch[A]          (curr: String)                                    extends PROpt[Double]
-//case class Project[A] //if discount calculates front to back, project goes from back to front...for arbitrary RP like stocks
 
 //Why does type have to be bounded??
 case class Environment(interestRate:BinomialLatticeBounded[Double],
@@ -60,7 +59,7 @@ object LatticeImplementation {
     //case When(o: Obs[Boolean], c: Contract)    => Disc(observableValuation(o), contractValuation(c))
     case When(date: LocalDate, c: Contract)    => Disc(date, contractToPROpt(c))
     case Anytime(date: LocalDate, c: Contract) => Snell(date, contractToPROpt(c))
-    case Until(date: LocalDate, c: Contract)   => Absorb(date, contractToPROpt(c))
+    //case Until(date: LocalDate, c: Contract)   => Absorb(date, contractToPROpt(c))
   }
 
   def obsToPROpt[A](observable: Obs[A]): PROpt[A] = observable match {
