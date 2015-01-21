@@ -54,10 +54,10 @@ object Main extends App {
   def americanPutOption(at:LocalDate, c1:Contract, strike:Double) = Anytime(at, option(sell(c1,strike)))
 
   //custom observable
-  def and(a:Obs[Boolean], b:Obs[Boolean]):Obs[Boolean] = Lift2[Boolean,Boolean,Boolean]((a,b)=>a && b, a, b)
-  def between(date1:LocalDate, date2:LocalDate):Obs[Boolean] = and(Const(date1) >= DateObs(), Const(date2) <= DateObs())
+  //def and(a:Obs[Boolean], b:Obs[Boolean]):Obs[Boolean] = Lift2[Boolean,Boolean,Boolean]((a,b)=>a && b, a, b)
+  //def between(date1:LocalDate, date2:LocalDate):Obs[Boolean] = and(Const(date1) >= DateObs(), Const(date2) <= DateObs())
   def stock(symbol:String) = Scale(Lookup(symbol),One("USD"))
-  def cash(amt:Double) = Scale(Const(amt),One("USD"))
+  //def cash(amt:Double) = Scale(Const(amt),One("USD"))
   val msft = stock("MSFT")
 
 
