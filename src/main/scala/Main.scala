@@ -37,6 +37,7 @@ narrow random process to BinomialLattice?
 separate binoialTree generation from lattice generation (one takes vol, other takes up factor directly)
  */
 object Main extends App {
+  //Required for doing LocalDate comparisons
   implicit val LocalDateOrdering = scala.math.Ordering.fromLessThan[java.time.LocalDate]{case (a,b) => (a compareTo b) < 0}
 
   //Custom combinators

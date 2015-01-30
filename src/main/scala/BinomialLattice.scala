@@ -105,9 +105,7 @@ trait BinomialLattice[A]{
     override def apply(i:Int) = apply(LocalDate.now().plusDays(i))
     override def apply(i:LocalDate) = func(i)
   }
-  class PassThroughBoundedBL[A](func:(LocalDate)=>RandomVariable[A], _size:Int) extends BinomialLatticeBounded[A]{
-    override def apply(i:Int) = apply(LocalDate.now().plusDays(i))
-    override def apply(i:LocalDate) = func(i)
+  class PassThroughBoundedBL[A](func:(LocalDate)=>RandomVariable[A], _size:Int) extends PassThroughBL[A](func) with BinomialLatticeBounded[A]{
     override def size() = _size
   }
   //Should this be implemented as PropagateRightBL?

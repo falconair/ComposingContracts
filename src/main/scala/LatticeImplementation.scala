@@ -27,7 +27,7 @@ abstract class PROpt[A] {
   def <=(that:PROpt[A])(implicit n: Ordering[A]):PROpt[Boolean] = Lift2PR((a:A,b:A)=> n.lteq(a,b), this,that)
 
 }
-case class ConstPR[A]             (k: A)                                      extends PROpt[A]
+case class ConstPR[A]       (k: A)                                            extends PROpt[A]
 case class DatePR           ()                                                extends PROpt[LocalDate]
 case class CondPR[A]        (cond: PROpt[Boolean], a: PROpt[A], b: PROpt[A])  extends PROpt[A]
 case class LiftPR[B, A]     (lifted: (B) => A, o: PROpt[B])                   extends PROpt[A]
@@ -56,7 +56,6 @@ object LatticeImplementation {
     case And(c1: Contract, c2: Contract)       => Lift2PR((a: Double, b: Double) => a + b, contractToPROpt(c1), contractToPROpt(c2))
     case Or(c1: Contract, c2: Contract)        => Lift2PR((a: Double, b: Double) => Math.max(a, b), contractToPROpt(c1), contractToPROpt(c2))
     case Cond(o: Obs[Boolean], c1: Contract, c2: Contract) => CondPR(obsToPROpt(o), contractToPROpt(c1), contractToPROpt(c2))
-    //case When(o: Obs[Boolean], c: Contract)    => Disc(observableValuation(o), contractValuation(c))
     case When(date: LocalDate, c: Contract)    => Disc(date, contractToPROpt(c))
     case Anytime(date: LocalDate, c: Contract) => Snell(date, contractToPROpt(c))
     //case Until(date: LocalDate, c: Contract)   => Absorb(date, contractToPROpt(c))
@@ -142,27 +141,15 @@ object LatticeImplementation {
   def binomialPriceTree(days:Int, startVal:Double, annualizedVolatility:Double, probability:Double=0.5):BinomialLatticeBounded[Double] = {
 
     val businessDaysInYear = 365.0
-    val fractionOfYear = days/(businessDaysInYear*1.0)
-    val changeFactorUp = Math.exp(annualizedVolatility* 1.0 * Math.sqrt(fractionOfYear))
+    val fractionOfYear = (days* 1.0)/businessDaysInYear
+    val changeFactorUp = vol2chfactor(annualizedVolatility,fractionOfYear)
     val process = new GenerateBL(days+1,startVal,changeFactorUp)
     process
   }
 
-  //generalize to some sort of right generator?
-  /*def discount(toDiscount:BinomialLatticeBounded[Double], interestRates:BinomialLattice[Double]):BinomialLattice[Double] = {
-    val size = toDiscount.size().get
-    val _process = new BinomialLatticeBounded[Double](size)
-    for (j <- 0 to size - 1) _process.set(size - 1, j, toDiscount(size-1)(j)) //set terminal to contract value on maturity
-    for (i <- (0 to (size - 2)).reverse) {
-      for (j <- 0 to i) {
-        val upVal = _process(i + 1)(j + 1)
-        val downVal = _process(i + 1)(j)
-        val expectedValue =.5 * upVal +.5 * downVal //probabilities are simplified to 1/2
-        _process.set(i, j, expectedValue / (1.0 + interestRates(LocalDate.now().plusDays(i))(j)))
-      }
-    }
-    _process
-  }*/
+  def vol2chfactor(vol:Double, fractionOfYear:Double) = {
+    Math.exp(vol * Math.sqrt(fractionOfYear))
+  }
 
   def discount(toDiscount:BinomialLatticeBounded[Double], interestRates:BinomialLattice[Double]):BinomialLatticeBounded[Double] = {
     val averaged = new PropagateLeftBL[Double](toDiscount, (x,y)=>(x+y)/2.0)//assume .5 probability
