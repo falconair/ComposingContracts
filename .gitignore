@@ -16,5 +16,10 @@ project/plugins/project/
 .scala_dependencies
 .worksheet
 .idea/
+*.iml
+.settings/
 
 .cache
+.cache-main
+.cache-tests
+/bin/
